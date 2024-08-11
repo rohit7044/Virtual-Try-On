@@ -71,6 +71,9 @@ Post-process the output of the model to get the masks, scores, and logits for vi
 if masks.ndim == 4:
     masks = masks.squeeze(1)
 
+# cv2.imshow("Grounding DINO", masks)
+# cv2.waitKey(0)
+
 
 confidences = confidences.numpy().tolist()
 class_names = labels
@@ -87,6 +90,7 @@ labels = [
 Visualize image with supervision useful API
 """
 img = cv2.imread(img_path)
+dark_bg_img = np.zeros_like(img)
 detections = sv.Detections(
     xyxy=input_boxes,  # (n, 4)
     mask=masks.astype(bool),  # (n, h, w)
@@ -96,10 +100,10 @@ detections = sv.Detections(
 box_annotator = sv.BoxAnnotator()
 annotated_frame = box_annotator.annotate(scene=img.copy(), detections=detections)
 
-label_annotator = sv.LabelAnnotator()
-annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
-cv2.imwrite("Test_case/Results/groundingdino_annotated_image.jpg", annotated_frame)
+# label_annotator = sv.LabelAnnotator()
+# annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
+# cv2.imwrite("Test_case/Results/groundingdino_annotated_image.jpg", annotated_frame)
 
-mask_annotator = sv.MaskAnnotator()
-annotated_frame = mask_annotator.annotate(scene=annotated_frame, detections=detections)
+mask_annotator = sv.MaskAnnotator(sv.Color.WHITE, opacity=1)
+annotated_frame = mask_annotator.annotate(scene=dark_bg_img, detections=detections)
 cv2.imwrite("Test_case/Results/grounded_sam2_annotated_image_with_mask.jpg", annotated_frame)
