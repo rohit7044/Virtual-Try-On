@@ -12,7 +12,7 @@ from grounding_dino.groundingdino.util.inference import load_model, load_image, 
 
 # build SAM2 image predictor
 sam2_checkpoint = "./checkpoints/sam2_hiera_tiny.pt"
-model_cfg = "sam2_hiera_l.yaml"
+model_cfg = "sam2_hiera_t.yaml"
 sam2_model = build_sam2(model_cfg, sam2_checkpoint, device="cuda")
 sam2_predictor = SAM2ImagePredictor(sam2_model)
 
@@ -98,8 +98,8 @@ annotated_frame = box_annotator.annotate(scene=img.copy(), detections=detections
 
 label_annotator = sv.LabelAnnotator()
 annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
-cv2.imwrite("Test_case/Results/white_male_groundingdino_annotated_image.jpg", annotated_frame)
+cv2.imwrite("Test_case/Results/groundingdino_annotated_image.jpg", annotated_frame)
 
 mask_annotator = sv.MaskAnnotator()
 annotated_frame = mask_annotator.annotate(scene=annotated_frame, detections=detections)
-cv2.imwrite("Test_case/Results/white_male_grounded_sam2_annotated_image_with_mask.jpg", annotated_frame)
+cv2.imwrite("Test_case/Results/grounded_sam2_annotated_image_with_mask.jpg", annotated_frame)
