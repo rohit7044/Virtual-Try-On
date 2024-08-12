@@ -6,6 +6,9 @@ from torchvision.ops import box_convert
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 from grounding_dino.groundingdino.util.inference import load_model, load_image, predict
+import time
+
+start = time.time()
 
 # environment settings
 # use bfloat16
@@ -20,16 +23,15 @@ sam2_predictor = SAM2ImagePredictor(sam2_model)
 model_id = "IDEA-Research/grounding-dino-tiny"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 grounding_model = load_model(
-    model_config_path="grounding_dino/groundingdino/config/GroundingDINO_SwinT_OGC.py", 
+    model_config_path="grounding_dino/groundingdino/config/GroundingDINO_SwinT_OGC.py",
     model_checkpoint_path="gdino_checkpoints/groundingdino_swint_ogc.pth",
     device=device
 )
 
-
 # setup the input image and text prompt for SAM 2 and Grounding DINO
 # VERY important: text queries need to be lowercased + end with a dot
 text = "shirt, pant"
-img_path = 'Test_case/white_male.jpg'
+img_path = 'Test_case/image_123650291 (2).JPG'
 
 image_source, image = load_image(img_path)
 
@@ -47,7 +49,6 @@ boxes, confidences, labels = predict(
 h, w, _ = image_source.shape
 boxes = boxes * torch.Tensor([w, h, w, h])
 input_boxes = box_convert(boxes=boxes, in_fmt="cxcywh", out_fmt="xyxy").numpy()
-
 
 # FIXME: figure how does this influence the G-DINO model
 torch.autocast(device_type="cuda", dtype=torch.bfloat16).__enter__()
@@ -100,10 +101,12 @@ detections = sv.Detections(
 box_annotator = sv.BoxAnnotator()
 annotated_frame = box_annotator.annotate(scene=img.copy(), detections=detections)
 
-# label_annotator = sv.LabelAnnotator()
-# annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
-# cv2.imwrite("Test_case/Results/groundingdino_annotated_image.jpg", annotated_frame)
+label_annotator = sv.LabelAnnotator()
+annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
+cv2.imwrite("Test_case/Results/image_123650291 (2)_groundingdino_annotated_image.jpg", annotated_frame)
 
 mask_annotator = sv.MaskAnnotator(sv.Color.WHITE, opacity=1)
 annotated_frame = mask_annotator.annotate(scene=dark_bg_img, detections=detections)
-cv2.imwrite("Test_case/Results/grounded_sam2_annotated_image_with_mask.jpg", annotated_frame)
+cv2.imwrite("Test_case/Results/image_123650291 (2)_grounded_sam2_annotated_image_with_mask.jpg", annotated_frame)
+
+print(time.time() - start)
