@@ -91,6 +91,7 @@ labels = [
 Visualize image with supervision useful API
 """
 img = cv2.imread(img_path)
+
 dark_bg_img = np.zeros_like(img)
 detections = sv.Detections(
     xyxy=input_boxes,  # (n, 4)
@@ -101,9 +102,9 @@ detections = sv.Detections(
 box_annotator = sv.BoxAnnotator()
 annotated_frame = box_annotator.annotate(scene=img.copy(), detections=detections)
 
-label_annotator = sv.LabelAnnotator()
-annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
-cv2.imwrite("Test_case/Results/image_123650291 (2)_groundingdino_annotated_image.jpg", annotated_frame)
+# label_annotator = sv.LabelAnnotator()
+# annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
+# cv2.imwrite("Test_case/Results/image_123650291 (2)_groundingdino_annotated_image.jpg", annotated_frame)
 
 mask_annotator = sv.MaskAnnotator(sv.Color.WHITE, opacity=1)
 annotated_frame = mask_annotator.annotate(scene=dark_bg_img, detections=detections)
