@@ -73,9 +73,9 @@ def categorize_and_save_masks(masks, labels, output_dir):
         elif any(item in class_name for item in footwear):
             binary_footwear_mask = np.maximum(binary_footwear_mask, (masks[idx] * 255).astype(np.uint8))
 
-    cv2.imwrite(os.path.join(output_dir, "Test_case/results/upper_garments_mask.png"), binary_upper_mask)
-    cv2.imwrite(os.path.join(output_dir, "Test_case/results/lower_garments_mask.png"), binary_lower_mask)
-    cv2.imwrite(os.path.join(output_dir, "Test_case/results/footwear_mask.png"), binary_footwear_mask)
+    cv2.imwrite(os.path.join(output_dir, "upper_garments_mask.png"), binary_upper_mask)
+    cv2.imwrite(os.path.join(output_dir, "lower_garments_mask.png"), binary_lower_mask)
+    cv2.imwrite(os.path.join(output_dir, "footwear_mask.png"), binary_footwear_mask)
 
 
 def main(image_path):
@@ -105,7 +105,6 @@ def main(image_path):
 
     # Setup output directory
     output_dir = os.path.join(os.path.dirname(image_path), 'Results')
-    os.makedirs(output_dir, exist_ok=True)
 
     # Get image and predict boxes
     image_source, image, boxes, labels = get_image_and_boxes(image_path, keywords, grounding_model)
